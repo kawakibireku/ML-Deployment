@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h3>Churn Customer Indihome</h3>
+    <h3>23523020 - 23523005</h3>
+    <div>
+      <form action="/predict" method="POST">
+        <label for="gender">Gender</label>
+        <select id="gender" name="gender">
+          <option value="0">Female</option>
+          <option value="1">Male</option>
+        </select>
+        <br />
+        <label for="SeniorCitizen">Senior Citizen</label>
+        <select id="SeniorCitizen" name="SeniorCitizen">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+        <br />
+        <label for="Partner">Partner</label>
+        <select id="Partner" name="Partner">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+        <br />
+        <label for="Dependents">Dependents</label>
+        <select id="Dependents" name="Dependents">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+        <br />
+        <label for="tenure">Tenure</label>
+        <input type="text" id="tenure" name="tenure" />
+        <br />
+        <label for="PhoneService">Phone Service</label>
+        <select id="PhoneService" name="PhoneService">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+        <br />
+        <label for="MultipleLines">Multiple Lines</label>
+        <select id="MultipleLines" name="MultipleLines">
+          <option value="0">No phone service</option>
+          <option value="1">No</option>
+          <option value="2">Yes</option>
+        </select>
+        <br />
+        <label for="InternetService">Internet Service</label>
+        <select id="InternetService" name="InternetService">
+          <option value="0">DSL</option>
+          <option value="1">Fiber optic</option>
+          <option value="2">No</option>
+        </select>
+        <br />
+        <label for="OnlineSecurity">Online Security</label>
+        <select id="OnlineSecurity" name="OnlineSecurity">
+          <option value="0">No</option>
+          <option value="1">No internet service</option>
+          <option value="2">Yes</option>
+        </select>
+        <br />
+        <label for="OnlineBackup">Online Backup</label>
+        <select id="OnlineBackup" name="OnlineBackup">
+          <option value="0">No</option>
+          <option value="1">No internet service</option>
+          <option value="2">Yes</option>
+        </select>
+        <br />
+        <label for="DeviceProtection">Device Protection</label>
+        <select id="DeviceProtection" name="DeviceProtection">
+          <option value="0">No</option>
+          <option value="1">No internet service</option>
+          <option value="2">Yes</option>
+        </select>
+        <br />
+        <label for="TechSupport">Tech Support</label>
+        <select id="TechSupport" name="TechSupport">
+          <option value="0">No</option>
+          <option value="1">No internet service</option>
+          <option value="2">Yes</option>
+        </select>
+        <br />
+        <label for="StreamingTV">Streaming TV</label>
+        <select id="StreamingTV" name="StreamingTV">
+          <option value="0">No</option>
+          <option value="1">No internet service</option>
+          <option value="2">Yes</option>
+        </select>
+        <br />
+        <label for="StreamingMovies">Streaming Movies</label>
+        <select id="StreamingMovies" name="StreamingMovies">
+          <option value="0">No</option>
+          <option value="1">No internet service</option>
+          <option value="2">Yes</option>
+        </select>
+        <br />
+        <label for="Contract">Contract</label>
+        <select id="Contract" name="Contract">
+          <option value="0">Month-to-month</option>
+          <option value="1">One year</option>
+          <option value="2">Two year</option>
+        </select>
+        <br />
+        <label for="PaperlessBilling">Paperless Billing</label>
+        <select id="PaperlessBilling" name="PaperlessBilling">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+        <br />
+        <label for="PaymentMethod">Payment Method</label>
+        <select id="PaymentMethod" name="PaymentMethod">
+          <option value="0">Bank transfer (automatic)</option>
+          <option value="1">Credit card (automatic)</option>
+          <option value="2">Electronic check</option>
+          <option value="3">Mailed check</option>
+        </select>
+        <br />
+        <label for="MonthlyCharges">Monthly Charges</label>
+        <input type="text" id="MonthlyCharges" name="MonthlyCharges" />
+        <br />
+        <label for="TotalCharges">Total Charges</label>
+        <input type="text" id="TotalCharges" name="TotalCharges" />
+        <button type="submit">Predict</button>
+      </form>
+    </div>
+  </body>
+</html>
