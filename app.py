@@ -2,11 +2,34 @@ import streamlit as st
 import numpy as np
 import pickle
 import pandas as pd
+import plotly.graph_objects as go
+from db.db import create_table, insert_review, get_reviews
+from huggingface.hugginface_inference import query
 
 # Load the model from the pickle file
-loaded_dict = pickle.load(open("./model/churn-scaler.pickle", "rb"))
-loaded_model = loaded_dict['model']  # Access the model from the dictionary
-loaded_scaler = loaded_dict['scaler']  # Access the scaler from the dictionary
+loaded_churn = pickle.load(open("./model/churn-scaler.pickle", "rb"))
+loaded_churn_model = loaded_churn['model']  # Access the model from the dictionary
+loaded_churn_scaler = loaded_churn['scaler']  # Access the scaler from the dictionary
+
+# Load the model forecast
+loaded_forecast_zone1_bandwidth = pickle.load(open("./model/forecast-zone1-bandwidth.pickle", "rb"))
+loaded_forecast_zone1_bandwidth_fit = loaded_forecast_zone1_bandwidth['model_fit']  # Access the model from the dictionary
+
+loaded_forecast_zone2_bandwidth = pickle.load(open("./model/forecast-zone2-bandwidth.pickle", "rb"))
+loaded_forecast_zone2_bandwidth_fit = loaded_forecast_zone2_bandwidth['model_fit']  # Access the model from the dictionary
+
+loaded_forecast_zone3_bandwidth = pickle.load(open("./model/forecast-zone3-bandwidth.pickle", "rb"))
+loaded_forecast_zone3_bandwidth_fit = loaded_forecast_zone3_bandwidth['model_fit']  # Access the model from the dictionary
+
+loaded_forecast_zone1_maxuser = pickle.load(open("./model/forecast-zone1-maxuser.pickle", "rb"))
+loaded_forecast_zone1_maxuser_fit = loaded_forecast_zone1_maxuser['model_fit']  # Access the model from the dictionary
+
+loaded_forecast_zone2_maxuser = pickle.load(open("./model/forecast-zone2-maxuser.pickle", "rb"))
+loaded_forecast_zone2_maxuser_fit = loaded_forecast_zone2_maxuser['model_fit']  # Access the model from the dictionary
+
+loaded_forecast_zone3_maxuser = pickle.load(open("./model/forecast-zone3-maxuser.pickle", "rb"))
+loaded_forecast_zone3_maxuser_fit = loaded_forecast_zone3_maxuser['model_fit']  # Access the model from the dictionary
+
 # Define the prediction function
 def ValuePredictor(to_predict_list):
     # to_predict = np.array(to_predict_list).reshape(1, 19)
@@ -59,13 +82,15 @@ def convert_form_values_to_numerical(gender, senior_citizen, partner, dependents
     # Return the numerical values as a list
     return [gender, senior_citizen, partner, dependents, tenure, phone_service, multiple_lines, internet_service, online_security, online_backup, device_protection, tech_support, streaming_tv, streaming_movies, contract, paperless_billing, payment_method, monthly_charges, total_charges]
 
+# def forecast_usage(zone):
+
 # Define the Streamlit app
 def run():
-    st.title("Churn Customer Indihome")
-    st.write("Melakukan Prediksi Churn Customer Indihome dengan menggunakan model Logistic Regression")
+    st.title("Tugas Besar")
+    # st.write("")
     st.sidebar.title("Tugas ")
 
-    menu = st.sidebar.selectbox('Menu', ['Customer Churn'])
+    menu = st.sidebar.selectbox('Menu', ['Customer Churn', 'Forecast Usage', 'Sentiment Analysis'])
     if menu == 'Customer Churn':
         col1, col2 = st.columns(2)
         # Create inputs for all the features
@@ -111,5 +136,72 @@ def run():
                 else:
                     prediction = 'The Customer is No Churn'
                 subcol2.markdown(prediction)
+    if menu == 'Forecast Usage':
+    
+        submenu = st.sidebar.selectbox('Zone', ['ZONE01', 'ZONE02', 'ZONE03'])
+        number_of_days = st.sidebar.slider('Number of days', min_value=1, max_value=30, value=1)
+        if submenu == 'ZONE01':
+            forecast_bandwidth = loaded_forecast_zone1_bandwidth_fit.forecast(number_of_days)
+            forecast_maxuser = loaded_forecast_zone1_maxuser_fit.forecast(number_of_days)
+             # Create a line chart with Plotly
+            fig_bandwidth = go.Figure()
+            fig_bandwidth.add_trace(go.Scatter(x=forecast_bandwidth.index, y=forecast_bandwidth, mode='lines+markers'))
+            fig_bandwidth.update_layout(title='Bandwidth Usage', xaxis_title='Time', yaxis_title='Usage')
+            st.plotly_chart(fig_bandwidth)
+            # Create a line chart max user
+            fig_maxuser = go.Figure()
+            fig_maxuser.add_trace(go.Scatter(x=forecast_maxuser.index,y=forecast_maxuser, mode='lines+markers'))
+            fig_maxuser.update_layout(title='Max User', xaxis_title='Time', yaxis_title='User')
+            st.plotly_chart(fig_maxuser) 
+        elif submenu == 'ZONE02':
+            forecast_bandwidth = loaded_forecast_zone2_bandwidth_fit.forecast(number_of_days)
+            forecast_maxuser = loaded_forecast_zone2_maxuser_fit.forecast(number_of_days)
+             # Create a line chart with Plotly
+            fig_bandwidth = go.Figure()
+            fig_bandwidth.add_trace(go.Scatter(x=forecast_bandwidth.index, y=forecast_bandwidth, mode='lines+markers'))
+            fig_bandwidth.update_layout(title='Bandwidth Usage', xaxis_title='Time', yaxis_title='Usage')
+            st.plotly_chart(fig_bandwidth)
+            # Create a line chart max user
+            fig_maxuser = go.Figure()
+            fig_maxuser.add_trace(go.Scatter(x=forecast_maxuser.index,y=forecast_maxuser, mode='lines+markers'))
+            fig_maxuser.update_layout(title='Max User', xaxis_title='Time', yaxis_title='User')
+            st.plotly_chart(fig_maxuser) 
+        elif submenu == 'ZONE03':
+            forecast_bandwidth = loaded_forecast_zone3_bandwidth_fit.forecast(number_of_days)
+            forecast_maxuser = loaded_forecast_zone3_maxuser_fit.forecast(number_of_days)
+            # Create a line chart with Plotly
+            fig_bandwidth = go.Figure()
+            fig_bandwidth.add_trace(go.Scatter(x=forecast_bandwidth.index, y=forecast_bandwidth, mode='lines+markers'))
+            fig_bandwidth.update_layout(title='Bandwidth Usage', xaxis_title='Time', yaxis_title='Usage')
+            st.plotly_chart(fig_bandwidth)
+            # Create a line chart max user
+            fig_maxuser = go.Figure()
+            fig_maxuser.add_trace(go.Scatter(x=forecast_maxuser.index,y=forecast_maxuser, mode='lines+markers'))
+            fig_maxuser.update_layout(title='Max User', xaxis_title='Time', yaxis_title='User')
+            st.plotly_chart(fig_maxuser) 
+    if menu == 'Sentiment Analysis':
+        st.write("Sentiment Analysis")
+        col1 = st.columns(1)
+        table_placeholder = st.empty()
+        reviews = get_reviews()
+        table_placeholder.dataframe(reviews)
+        review = st.text_area("Write a review")
+        
+        if st.button("Submit"):
+            result, status = query({"inputs": review})
+            if status != 200:
+                st.error(f"Error: {result['error']}")
+            else:
+                sentiment = {}
+                for item in result[0]:
+                    sentiment[item["label"]] = item["score"]
+                summary_sentiment = max(sentiment, key=sentiment.get)
+                insert_review(review, sentiment["positive"], sentiment["negative"], sentiment["neutral"], summary_sentiment)
+                reviews = get_reviews()
+                table_placeholder.dataframe(reviews)     
+        
 if __name__ == '__main__':
+    
+    #create table for sentiment analysis
+    create_table()
     run()
