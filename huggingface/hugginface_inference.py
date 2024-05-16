@@ -1,8 +1,7 @@
-from dotenv import load_dotenv
-import os
 import requests
-load_dotenv()
-TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+import streamlit as st
+
+TOKEN = st.secrets["HUGGINGFACE_TOKEN"]
 print(TOKEN)
 API_URL = "https://api-inference.huggingface.co/models/w11wo/indonesian-roberta-base-sentiment-classifier"
 headers = {"Authorization": f"Bearer {TOKEN}"}
