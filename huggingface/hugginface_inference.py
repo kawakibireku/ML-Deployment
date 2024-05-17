@@ -2,7 +2,6 @@ import requests
 import streamlit as st
 
 TOKEN = st.secrets["HUGGINGFACE_TOKEN"]
-print(TOKEN)
 API_URL = "https://api-inference.huggingface.co/models/w11wo/indonesian-roberta-base-sentiment-classifier"
 headers = {"Authorization": f"Bearer {TOKEN}"}
 

@@ -5,7 +5,8 @@ import pandas as pd
 import plotly.graph_objects as go
 from db.db import create_table, insert_review, get_reviews
 from huggingface.hugginface_inference import query
-
+from chatbot.gemini import ask_question, get_text_from_response
+import textwrap
 # Load the model from the pickle file
 loaded_churn = pickle.load(open("./model/churn-scaler.pickle", "rb"))
 loaded_churn_model = loaded_churn['model']  # Access the model from the dictionary
@@ -90,7 +91,7 @@ def run():
     # st.write("")
     st.sidebar.title("Tugas ")
 
-    menu = st.sidebar.selectbox('Menu', ['Customer Churn', 'Forecast Usage', 'Sentiment Analysis'])
+    menu = st.sidebar.selectbox('Menu', ['Customer Churn', 'Forecast Usage', 'Sentiment Analysis', 'Chatbot'])
     if menu == 'Customer Churn':
         col1, col2 = st.columns(2)
         # Create inputs for all the features
@@ -199,7 +200,24 @@ def run():
                 insert_review(review, sentiment["positive"], sentiment["negative"], sentiment["neutral"], summary_sentiment)
                 reviews = get_reviews()
                 table_placeholder.dataframe(reviews)     
-        
+    if menu == 'Chatbot':
+        st.write("Chatbot")
+        # Create a list to store the dialog history
+        if 'dialog_history' not in st.session_state:
+            st.session_state.dialog_history = []
+        question = st.text_area("Ask a question")
+        if st.button("Ask"):
+            response = ask_question(question)
+            # Add the question to the dialog history
+            st.session_state.dialog_history.append("User: " + question)
+            # Iterate over the response and add each chunk to the dialog history
+            st.session_state.dialog_history.append("Chatbot: " + get_text_from_response(response))
+            # Display the dialog history
+            for dialog in st.session_state.dialog_history:
+                dialog_wrapped = textwrap.fill(dialog, width=100)
+                st.text(dialog_wrapped)
+        else:
+            st.write("Waiting for question...")
 if __name__ == '__main__':
     
     #create table for sentiment analysis

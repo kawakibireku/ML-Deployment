@@ -1,3 +1,4 @@
 .streamlit/secrets.toml
 huggingface/__pycache__
 db/__pycache__
+chatbot/__pycache__
