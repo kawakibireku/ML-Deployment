@@ -12,6 +12,9 @@ loaded_churn = pickle.load(open("./model/churn-scaler.pickle", "rb"))
 loaded_churn_model = loaded_churn['model']  # Access the model from the dictionary
 loaded_churn_scaler = loaded_churn['scaler']  # Access the scaler from the dictionary
 
+loaded_visits = pickle.load(open("./model/regression-scaler.pickle", "rb"))
+loaded_visits_model = loaded_visits['model']  # Access the model from the dictionary
+loaded_visits_transform = loaded_visits['transform'] 
 # Load the model forecast
 loaded_forecast_zone1_bandwidth = pickle.load(open("./model/forecast-zone1-bandwidth.pickle", "rb"))
 loaded_forecast_zone1_bandwidth_fit = loaded_forecast_zone1_bandwidth['model_fit']  # Access the model from the dictionary
@@ -31,13 +34,18 @@ loaded_forecast_zone2_maxuser_fit = loaded_forecast_zone2_maxuser['model_fit']  
 loaded_forecast_zone3_maxuser = pickle.load(open("./model/forecast-zone3-maxuser.pickle", "rb"))
 loaded_forecast_zone3_maxuser_fit = loaded_forecast_zone3_maxuser['model_fit']  # Access the model from the dictionary
 
+
 # Define the prediction function
 def ValuePredictor(to_predict_list):
     # to_predict = np.array(to_predict_list).reshape(1, 19)
     num_cols = ['tenure', 'MonthlyCharges', 'TotalCharges']
     # cat_cols_ohe = ['PaymentMethod', 'Contract', 'InternetService']
-    to_predict_list[num_cols] = loaded_scaler.transform(to_predict_list[num_cols])
-    result = loaded_model.predict(to_predict_list)
+    to_predict_list[num_cols] = loaded_churn_scaler.transform(to_predict_list[num_cols])
+    result = loaded_churn.predict(to_predict_list)
+    return result[0]
+def predict_visits(df):
+    fit = loaded_visits_transform.fit_transform(df)
+    result = loaded_visits_model.predict(fit)
     return result[0]
 
 def convert_form_values_to_numerical(gender, senior_citizen, partner, dependents, tenure, phone_service, multiple_lines, internet_service, online_security, online_backup, device_protection, tech_support, streaming_tv, streaming_movies, contract, paperless_billing, payment_method, monthly_charges, total_charges):
@@ -89,9 +97,9 @@ def convert_form_values_to_numerical(gender, senior_citizen, partner, dependents
 def run():
     st.title("Tugas Besar")
     # st.write("")
-    st.sidebar.title("Tugas ")
+    st.sidebar.title("Tugas")
 
-    menu = st.sidebar.selectbox('Menu', ['Customer Churn', 'Forecast Usage', 'Sentiment Analysis', 'Chatbot'])
+    menu = st.sidebar.selectbox('Menu', ['Customer Churn', 'Forecast Usage', 'Sentiment Analysis', 'Chatbot', 'Predict Unique Visits'])
     if menu == 'Customer Churn':
         col1, col2 = st.columns(2)
         # Create inputs for all the features
@@ -218,6 +226,22 @@ def run():
                 st.text(dialog_wrapped)
         else:
             st.write("Waiting for question...")
+    if menu == 'Predict Unique Visits':
+        st.write("Predict Unique Visits")
+          # Create input fields for Page.Loads, First.Time.Visits, and Returning.Visits
+        page_loads = st.number_input('Page Loads', min_value=0)
+        first_time_visits = st.number_input('First Time Visits', min_value=0)
+        returning_visits = st.number_input('Returning Visits', min_value=0)
+        if st.button('Predict'):
+            # Convert the inputs into a DataFrame
+            df = pd.DataFrame({
+                'Page.Loads': page_loads,
+                'First.Time.Visits': first_time_visits,
+                'Returning.Visits': returning_visits
+            }, index=[0])
+            result = predict_visits(df)
+            st.write(result)
+        
 if __name__ == '__main__':
     
     #create table for sentiment analysis
