@@ -41,8 +41,9 @@ def ValuePredictor(to_predict_list):
     num_cols = ['tenure', 'MonthlyCharges', 'TotalCharges']
     # cat_cols_ohe = ['PaymentMethod', 'Contract', 'InternetService']
     to_predict_list[num_cols] = loaded_churn_scaler.transform(to_predict_list[num_cols])
-    result = loaded_churn.predict(to_predict_list)
+    result = loaded_churn_model.predict(to_predict_list)
     return result[0]
+
 def predict_visits(df):
     fit = loaded_visits_transform.fit_transform(df)
     result = loaded_visits_model.predict(fit)
